@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>World Trials</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <h1>World Clinical Trials</h1>
+    <div class="button-container">
+      <button onclick="goToHomePage()">Home Page</button>
+      <button onclick="goToWorldTrials()">World Trials</button>
+      <button onclick="goToUKTrials()">UK Trials</button>
+      <button onclick="goToCancerTrials()">Cancer Trials</button>
+    </div>
+
+    <script src="script.js"></script>
+
+    <div
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 80hv;
+      "
+    >
+      <div style="width: 75%">
+        <canvas id="line_chart"></canvas>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="box">
+        <div class="d">
+          <p>
+            The evolution of clinical trials over the past two decades. There
+            has been little improvement in the ethnic diversity of clinical
+            trial participants. Studies continue to disproportionately enroll
+            white participants, who are over-represented. Many participants are
+            also categorised under the non-specific "other" ethnicity. The
+            persistent high prevalence of the "other" category shows that many
+            people do not feel they fit within the ethnicity options typically
+            provided. Simply labeling a significant portion of participants as
+            "other" obscures details that could be meaningful for understanding
+            treatment effects across groups.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <div id="stream_graph"></div>
+      <div class="legend-container"></div>
+    </div>
+
+    <div class="chart-container">
+      <div id="bubble_chart"></div>
+    </div>
+
+    <div class="container">
+      <div class="box">
+        <div class="d">
+          <p>insert description...</p>
+        </div>
+      </div>
+    </div>
+
+    <div
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 80vh;
+      "
+    >
+      <div style="width: 75%">
+        <canvas id="phase_line_chart"></canvas>
+        <select id="choose_ethnicity_dropdown">
+          <option value="American Indian/ Alaska Native">
+            American Indian/ Alaska Native
+          </option>
+          <option value="Asian/ Asian Heritage">Asian/ Asian Heritage</option>
+          <option value="Black/ Black Heritage">Black/ Black Heritage</option>
+          <option value="Hawaiian/ Other Pacific Islander">
+            Hawaiian/ Other Pacific Islander
+          </option>
+          <option value="Hispanic/ Latino">Hispanic/ Latino</option>
+          <option value="Middle Eastern">Middle Eastern</option>
+          <option value="Mixed">Mixed</option>
+          <option value="Other">Other</option>
+          <option value="Unknown or Not Reported">
+            Unknown or Not Reported
+          </option>
+          <option value="White/ White Heritage">White/ White Heritage</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="box">
+        <div class="d">
+          <p>insert description...</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div style="display: flex; justify-content: center">
+        <img
+          src="https://cdn.glitch.global/d00b7e14-f540-447a-a51d-67544622f810/heatmap_World_trials.png?v=1690807968384"
+          style="width: 65%"
+        />
+      </div>
+
+      <div class="box">
+        <div class="d">
+          <p>
+            In clinical trials for new drugs, the participants are predominantly
+            white. This occurs across all trial phases - from initial safety
+            testing in a small group (Phase I) through efficacy evaluations in
+            larger populations (Phase II and III) to post-approval monitoring of
+            side effects (Phase IV). The underrepresentation of minorities
+            persists as trials progress from early human studies to expanded
+            trials aimed at marketing approval and beyond. There is an overall
+            lack of diversity in trial recruitment that should be addressed to
+            ensure treatment benefits all groups equally.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      //////////////////////////////////////////////////////////////
+
+      //////////////////////// LINE CHART //////////////////////////
+
+      //////////////////////////////////////////////////////////////
+
+      const ctx = document.getElementById("line_chart").getContext("2d");
+      const chart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: [
+            2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012,
+            2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022,
+          ],
+          datasets: [
+            {
+              label: "Number of new trials with results on ethnicity",
+              data: [
+                62, 107, 184, 278, 444, 523, 652, 859, 946, 1119, 1244, 1635,
+                1889, 2379, 2485, 2558, 2071, 1480, 859, 292, 18,
+              ],
+              borderColor: "rgb(75, 192, 192)",
+              fill: false,
+            },
+            {
+              label: "Number of new trials with results",
+              data: [
+                413, 740, 1138, 1735, 2707, 3417, 3813, 3962, 3814, 3774, 3716,
+                3925, 3907, 3981, 3624, 3388, 2733, 1897, 1082, 398, 30,
+              ],
+              borderColor: "rgb(255, 99, 132)",
+              fill: false,
+            },
+          ],
+        },
+        options: {
+          plugins: {
+            title: {
+              display: true,
+              text: "Trials Reporting Results",
+              font: {
+                size: 24,
+              },
+            },
+            tooltip: {
+              mode: "index",
+              intersect: false,
+            },
+          },
+          interaction: {
+            mode: "nearest",
+            intersect: true,
+          },
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: "Year",
+                font: {
+                  size: 16,
+                },
+              },
+            },
+            y: {
+              title: {
+                display: true,
+                text: "Number of Trials",
+                font: {
+                  size: 16,
+                },
+              },
+            },
+          },
+          responsive: true,
+        },
+      });
+
+      //////////////////////////////////////////////////////////////
+
+      /////////////////////// STREAM CHART /////////////////////////
+
+      //////////////////////////////////////////////////////////////
+
+      // Set the data and other variables
+      var data = [
+        {
+          year: 2009,
+          "American Indian/ Alaska Native": 0,
+          "Asian/ Asian Heritage": 132,
+          "Black/ Black Heritage": 0,
+          "Hawaiian/ Other Pacific Islander": 0,
+          "Hispanic/ Latino": 0,
+          "Middle Eastern": 0,
+          Mixed: 0,
+          Other: 0,
+          "Unknown or Not Reported": 0,
+          "White/ White Heritage": 0,
+        },
+        {
+          year: 2011,
+          "American Indian/ Alaska Native": 4,
+          "Asian/ Asian Heritage": 162,
+          "Black/ Black Heritage": 114,
+          "Hawaiian/ Other Pacific Islander": 4,
+          "Hispanic/ Latino": 126,
+          "Middle Eastern": 0,
+          Mixed: 8,
+          Other: 2710,
+          "Unknown or Not Reported": 28,
+          "White/ White Heritage": 2582,
+        },
+        {
+          year: 2012,
+          "American Indian/ Alaska Native": 8,
+          "Asian/ Asian Heritage": 473,
+          "Black/ Black Heritage": 277,
+          "Hawaiian/ Other Pacific Islander": 14,
+          "Hispanic/ Latino": 224,
+          "Middle Eastern": 0,
+          Mixed: 4,
+          Other: 4423,
+          "Unknown or Not Reported": 1954,
+          "White/ White Heritage": 6950,
+        },
+        {
+          year: 2013,
+          "American Indian/ Alaska Native": 21,
+          "Asian/ Asian Heritage": 2068,
+          "Black/ Black Heritage": 438,
+          "Hawaiian/ Other Pacific Islander": 18,
+          "Hispanic/ Latino": 164,
+          "Middle Eastern": 0,
+          Mixed: 8,
+          Other: 5624,
+          "Unknown or Not Reported": 1647,
+          "White/ White Heritage": 7438,
+        },
+        {
+          year: 2014,
+          "American Indian/ Alaska Native": 57,
+          "Asian/ Asian Heritage": 2008,
+          "Black/ Black Heritage": 615,
+          "Hawaiian/ Other Pacific Islander": 26,
+          "Hispanic/ Latino": 855,
+          "Middle Eastern": 0,
+          Mixed: 202,
+          Other: 16235,
+          "Unknown or Not Reported": 4159,
+          "White/ White Heritage": 17292,
+        },
+        {
+          year: 2015,
+          "American Indian/ Alaska Native": 179,
+          "Asian/ Asian Heritage": 7488,
+          "Black/ Black Heritage": 1071,
+          "Hawaiian/ Other Pacific Islander": 45,
+          "Hispanic/ Latino": 2595,
+          "Middle Eastern": 4,
+          Mixed: 224,
+          Other: 31680,
+          "Unknown or Not Reported": 6299,
+          "White/ White Heritage": 29705,
+        },
+        {
+          year: 2016,
+          "American Indian/ Alaska Native": 180,
+          "Asian/ Asian Heritage": 9092,
+          "Black/ Black Heritage": 1185,
+          "Hawaiian/ Other Pacific Islander": 43,
+          "Hispanic/ Latino": 2232,
+          "Middle Eastern": 0,
+          Mixed: 84,
+          Other: 29533,
+          "Unknown or Not Reported": 9585,
+          "White/ White Heritage": 36350,
+        },
+        {
+          year: 2017,
+          "American Indian/ Alaska Native": 236,
+          "Asian/ Asian Heritage": 9651,
+          "Black/ Black Heritage": 995,
+          "Hawaiian/ Other Pacific Islander": 34,
+          "Hispanic/ Latino": 2761,
+          "Middle Eastern": 0,
+          Mixed: 104,
+          Other: 32718,
+          "Unknown or Not Reported": 7911,
+          "White/ White Heritage": 31089,
+        },
+        {
+          year: 2018,
+          "American Indian/ Alaska Native": 44,
+          "Asian/ Asian Heritage": 2287,
+          "Black/ Black Heritage": 346,
+          "Hawaiian/ Other Pacific Islander": 12,
+          "Hispanic/ Latino": 1894,
+          "Middle Eastern": 2,
+          Mixed: 80,
+          Other: 12877,
+          "Unknown or Not Reported": 4138,
+          "White/ White Heritage": 11062,
+        },
+        {
+          year: 2019,
+          "American Indian/ Alaska Native": 38,
+          "Asian/ Asian Heritage": 1766,
+          "Black/ Black Heritage": 146,
+          "Hawaiian/ Other Pacific Islander": 7,
+          "Hispanic/ Latino": 460,
+          "Middle Eastern": 0,
+          Mixed: 24,
+          Other: 4048,
+          "Unknown or Not Reported": 290,
+          "White/ White Heritage": 3879,
+        },
+        {
+          year: 2020,
+          "American Indian/ Alaska Native": 1,
+          "Asian/ Asian Heritage": 35,
+          "Black/ Black Heritage": 17,
+          "Hawaiian/ Other Pacific Islander": 0,
+          "Hispanic/ Latino": 68,
+          "Middle Eastern": 0,
+          Mixed: 6,
+          Other: 1616,
+          "Unknown or Not Reported": 287,
+          "White/ White Heritage": 1712,
+        },
+        {
+          year: 2021,
+          "American Indian/ Alaska Native": 0,
+          "Asian/ Asian Heritage": 44,
+          "Black/ Black Heritage": 7,
+          "Hawaiian/ Other Pacific Islander": 0,
+          "Hispanic/ Latino": 22,
+          "Middle Eastern": 0,
+          Mixed: 2,
+          Other: 165,
+          "Unknown or Not Reported": 70,
+          "White/ White Heritage": 124,
+        },
+        {
+          year: 2022,
+          "American Indian/ Alaska Native": 0,
+          "Asian/ Asian Heritage": 0,
+          "Black/ Black Heritage": 0,
+          "Hawaiian/ Other Pacific Islander": 0,
+          "Hispanic/ Latino": 0,
+          "Middle Eastern": 0,
+          Mixed: 0,
+          Other: 0,
+          "Unknown or Not Reported": 0,
+          "White/ White Heritage": 3,
+        },
+      ];
+
+      // Select the div container
+      var container = d3.select("#stream_graph");
+
+      // Get the width and height of the container
+      var containerWidth = parseInt(container.style("width")),
+        containerHeight = parseInt(container.style("height"));
+
+      var margin = { top: 100, right: 20, bottom: 50, left: 40 },
+        width = containerWidth - margin.left - margin.right,
+        height = containerHeight - margin.top - margin.bottom;
+
+      // Append the SVG object to the body of the page
+      var svg = container
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+      svg
+        .append("text")
+        .attr("x", width / 2)
+        .attr("y", 0 - margin.top / 2)
+        .attr("text-anchor", "middle")
+        .style("font-size", "35px")
+        .text("Evolution of ethnic groups in clinical trials over time");
+
+      // Set the stack offset
+      var stackOffset = d3.stackOffsetSilhouette;
+
+      // Add X axis
+      var x = d3.scaleLinear().range([0, width]);
+      x.domain(
+        d3.extent(data, function (d) {
+          return parseInt(d.year);
+        })
+      );
+      svg
+        .append("g")
+        .attr("transform", "translate(0," + height * 1 + ")")
+        .call(
+          d3
+            .axisBottom(x)
+            .tickSize(-height * 1)
+            .tickFormat(d3.format("d"))
+        )
+        .selectAll(".domain")
+        .remove();
+      svg.selectAll(".tick line").attr("stroke", "#b8b8b8");
+
+      // Append X axis label
+      svg
+        .append("text")
+        .attr("text-anchor", "end")
+        .attr("x", width)
+        .attr("y", height + margin.top + 10)
+        .text("Year");
+
+      // Add Y axis
+      var y = d3.scaleLinear().range([height, 0]);
+
+      // Add Y axis
+      var y = d3.scaleLinear().range([height, 0]);
+      y.domain([
+        d3.min(data, function (d) {
+          return d3.min(Object.values(d).slice(1));
+        }),
+        d3.max(data, function (d) {
+          return d3.max(Object.values(d).slice(1));
+        }),
+      ]);
+
+      // Update the y domain based on your desired range
+      y.domain([0, 150000]);
+
+      // Define the updated color palette and order
+      var race_colors = [
+        "#EE6A50",
+        "#fde624",
+        "#3b518b",
+        "#5cc862",
+        "orange",
+        "black",
+        "green",
+        "#21908c",
+        "#430154",
+        "skyblue",
+      ];
+      var race_order = [
+        "Unknown or Not Reported",
+        "White/ White Heritage",
+        "Black/ Black Heritage",
+        "Asian/ Asian Heritage",
+        "American Indian/ Alaska Native",
+        "Hawaiian/ Other Pacific Islander",
+        "Mixed",
+        "Hispanic/ Latino",
+        "Middle Eastern",
+        "Other",
+      ];
+      var color = d3.scaleOrdinal().domain(race_order).range(race_colors);
+
+      // Reorder the data based on the race order
+      var reorderedData = data.map(function (d) {
+        var reordered = { year: d.year };
+        race_order.forEach(function (race) {
+          reordered[race] = d[race];
+        });
+        return reordered;
+      });
+
+      // Stack the data
+      var keys = Object.keys(reorderedData[0]).slice(1);
+      // Set the stack keys to the desired order
+      // Set the stack keys to the reversed order
+      var stackedData = d3
+        .stack()
+        .keys(race_order.reverse())
+        .offset(stackOffset)(reorderedData);
+
+      // Create a tooltip
+      var tooltip = svg
+        .append("text")
+        .attr("x", 0)
+        .attr("y", 0)
+        .style("opacity", 0)
+        .style("font-size", 17);
+
+      var area = d3
+        .area()
+        .x(function (d) {
+          return x(d.data.year);
+        })
+        .y0(function (d) {
+          return y(d[0]) - height * 0.5; // Moving the chart up by 50% of the height
+        })
+        .y1(function (d) {
+          return y(d[1]) - height * 0.5; // Moving the chart up by 50% of the height
+        });
+
+      // Create a tooltip
+      var tooltip = d3
+        .select("body")
+        .append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+
+      // Show the areas
+      var areas = svg
+        .selectAll("mylayers")
+        .data(stackedData)
+        .enter()
+        .append("path")
+        .attr("class", "myArea") // Note: this is the class you may want to style
+        .style("fill", function (d) {
+          return color(d.key);
+        })
+        .attr("d", area);
+
+      // Add vertical line that follows the cursor
+      var verticalLine = svg
+        .append("line")
+        .attr("opacity", 0)
+        .attr("y1", 0)
+        .attr("y2", height)
+        .attr("stroke", "black")
+        .attr("stroke-width", 1)
+        .attr("pointer-events", "none");
+
+      // Append a transparent rectangle for catching hover events across the whole graph
+      svg
+        .append("rect")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("fill", "transparent");
+
+      // Attach mouse events to the transparent rectangle
+      svg
+        .select("rect")
+        .on("mousemove", function (event) {
+          // Find nearest data point to mouse position
+          var xPos = d3.pointer(event)[0];
+          var year = Math.round(x.invert(xPos));
+          var yearData = data.find((d) => d.year === year);
+
+          if (yearData) {
+            var displayData = race_order.map((race) => [race, yearData[race]]);
+
+            // Display data on the right side
+            d3.select(".legend-container").html(() => {
+              return (
+                `<div style="text-align:center; font-size: 35px;">Year: ${year}</div><br>` +
+                displayData
+                  .reverse()
+                  .map(
+                    ([key, value]) =>
+                      `<div style="font-size: 20px;"><span style="background:${color(
+                        key
+                      )}; width:20px; height:20px; display: inline-block; margin-right: 5px;"></span>${key}: ${value}</div>`
+                  )
+                  .join("<br>")
+              );
+            });
+
+            // Move vertical line
+            verticalLine
+              .attr("x1", x(year))
+              .attr("x2", x(year))
+              .attr("opacity", 1);
+          }
+        })
+        .on("mouseleave", function () {
+          verticalLine.attr("opacity", 0);
+          d3.select(".legend-container").html("");
+        });
+
+      //////////////////////////////////////////////////////////////
+
+      /////////////////////// BUBBLE CHART /////////////////////////
+
+      //////////////////////////////////////////////////////////////
+
+      // Set the data for the bubble chart
+      var bubbleData = [
+        { ethnicGroup: "Unknown or Not Reported", count: 36368 },
+        { ethnicGroup: "White/ White Heritage", count: 141629 },
+        { ethnicGroup: "Black/ Black Heritage", count: 5211 },
+        { ethnicGroup: "Asian/ Asian Heritage", count: 35206 },
+        { ethnicGroup: "American Indian/ Alaska Native", count: 768 },
+        { ethnicGroup: "Hawaiian/ Other Pacific Islander", count: 203 },
+        { ethnicGroup: "Mixed", count: 746 },
+        { ethnicGroup: "Hispanic/ Latino", count: 11401 },
+        { ethnicGroup: "Middle Eastern", count: 6 },
+        { ethnicGroup: "Other", count: 35206 },
+        // { ethnicGroup: "No Results", count: 413295949},
+      ];
+
+      // Adjust the width and margins of the bubble chart
+      var bubbleMargin = { top: 20, right: 20, bottom: 20, left: 20 };
+      var bubbleWidth =
+        window.innerWidth - bubbleMargin.left - bubbleMargin.right + 20;
+      var bubbleHeight =
+        containerHeight - bubbleMargin.top - bubbleMargin.bottom;
+
+      // Append the SVG object for the bubble chart
+      var bubbleSvg = container
+        .append("svg")
+        .attr("width", bubbleWidth + bubbleMargin.left + bubbleMargin.right)
+        .attr("height", bubbleHeight + bubbleMargin.top + bubbleMargin.bottom)
+        .append("g")
+        .attr(
+          "transform",
+          "translate(" + bubbleMargin.left + "," + bubbleMargin.top + ")"
+        );
+
+      // Create a scale for the bubble radius
+      var maxCount = d3.max(bubbleData, function (d) {
+        return d.count;
+      });
+      var radiusScale = d3
+        .scaleSqrt()
+        .domain([0, maxCount])
+        .range([0, bubbleWidth / 10]); // Adjust the range as needed
+
+      // Define the updated color palette and order
+      var race_colors = [
+        "#EE6A50",
+        "#fde624",
+        "#3b518b",
+        "#5cc862",
+        "orange",
+        "black",
+        "green",
+        "#21908c",
+        "#430154",
+        "skyblue",
+      ];
+
+      // Append the title
+      bubbleSvg
+        .append("text")
+        .attr("class", "chart-title")
+        .attr("x", bubbleWidth / 2)
+        .attr("y", 40)
+        .attr("text-anchor", "middle")
+        .style("font-size", "35px")
+        .text("Total number of participants by ethnic group");
+
+      // Create the bubble chart using the data
+      var bubbles = bubbleSvg
+        .selectAll(".bubble")
+        .data(bubbleData)
+        .enter()
+        .append("g")
+        .attr("class", "bubble")
+        .attr("transform", function (d, i) {
+          var spacing = bubbleWidth / (bubbleData.length + 1); // Increase the denominator to adjust spacing
+          var x = (i + 1) * spacing; // Add 1 to i for positioning
+          var y = bubbleHeight / 2;
+          return "translate(" + x + "," + y + ")";
+        });
+
+      // Append the circles for bubbles
+      bubbles
+        .append("circle")
+        .attr("r", function (d) {
+          return radiusScale(d.count);
+        })
+        .style("fill", function (d, i) {
+          return race_colors[i];
+        })
+        .style("opacity", 0.8);
+
+      // Append the lines for labels
+      bubbles
+        .append("line")
+        .attr("class", "label-line")
+        .attr("x1", 0)
+        .attr("y1", function (d, i) {
+          return i % 2 === 0 ? -2 : 2;
+        })
+        .attr("x2", 0)
+        .attr("y2", function (d, i) {
+          return i % 2 === 0 ? -150 : 150;
+        })
+        .style("stroke", "black")
+        .style("stroke-width", 1.5)
+        .style("opacity", 0.3);
+
+      // Append the text labels
+      bubbles
+        .append("text")
+        .attr("class", "label")
+        .attr("x", 0)
+        .attr("y", function (d, i) {
+          return i % 2 === 0 ? -155 : 165;
+        })
+        .text(function (d) {
+          return d.ethnicGroup + ": " + d.count;
+        })
+        .style("fill", "black")
+        .style("font-size", "16px")
+        .style("text-anchor", "middle");
+
+      //////////////////////////////////////////////////////////////
+
+      ///////////////////// PHASE LINE CHART ///////////////////////
+
+      //////////////////////////////////////////////////////////////
+
+      var data_phase = {
+        "Early Phase 1": {
+          "American Indian/ Alaska Native": 17,
+          "Asian/ Asian Heritage": 242,
+          "Black/ Black Heritage": 517,
+          "Hawaiian/ Other Pacific Islander": 5,
+          "Hispanic/ Latino": 363,
+          "Middle Eastern": 0,
+          Mixed: 115,
+          Other: 0,
+          "Unknown or Not Reported": 221,
+          "White/ White Heritage": 6159,
+        },
+        "Phase 1": {
+          "American Indian/ Alaska Native": 249,
+          "Asian/ Asian Heritage": 7870,
+          "Black/ Black Heritage": 9083,
+          "Hawaiian/ Other Pacific Islander": 170,
+          "Hispanic/ Latino": 8355,
+          "Middle Eastern": 25,
+          Mixed: 1026,
+          Other: 194,
+          "Unknown or Not Reported": 2741,
+          "White/ White Heritage": 89479,
+        },
+        "Phase 1/Phase 2": {
+          "American Indian/ Alaska Native": 1040,
+          "Asian/ Asian Heritage": 9530,
+          "Black/ Black Heritage": 11093,
+          "Hawaiian/ Other Pacific Islander": 157,
+          "Hispanic/ Latino": 5145,
+          "Middle Eastern": 2,
+          Mixed: 3065,
+          Other: 281,
+          "Unknown or Not Reported": 6814,
+          "White/ White Heritage": 121025,
+        },
+        "Phase 2": {
+          "American Indian/ Alaska Native": 6664,
+          "Asian/ Asian Heritage": 44414,
+          "Black/ Black Heritage": 72234,
+          "Hawaiian/ Other Pacific Islander": 2200,
+          "Hispanic/ Latino": 70957,
+          "Middle Eastern": 285,
+          Mixed: 11260,
+          Other: 2549,
+          "Unknown or Not Reported": 35035,
+          "White/ White Heritage": 792354,
+        },
+        "Phase 2/Phase 3": {
+          "American Indian/ Alaska Native": 866,
+          "Asian/ Asian Heritage": 4834,
+          "Black/ Black Heritage": 14076,
+          "Hawaiian/ Other Pacific Islander": 158,
+          "Hispanic/ Latino": 13484,
+          "Middle Eastern": 36,
+          Mixed: 1236,
+          Other: 49,
+          "Unknown or Not Reported": 7242,
+          "White/ White Heritage": 119624,
+        },
+        "Phase 3": {
+          "American Indian/ Alaska Native": 34004,
+          "Asian/ Asian Heritage": 296309,
+          "Black/ Black Heritage": 221858,
+          "Hawaiian/ Other Pacific Islander": 4723,
+          "Hispanic/ Latino": 268020,
+          "Middle Eastern": 1231,
+          Mixed: 28073,
+          Other: 24469,
+          "Unknown or Not Reported": 215273,
+          "White/ White Heritage": 3236978,
+        },
+        "Phase 4": {
+          "American Indian/ Alaska Native": 2639,
+          "Asian/ Asian Heritage": 30161,
+          "Black/ Black Heritage": 189424,
+          "Hawaiian/ Other Pacific Islander": 3238,
+          "Hispanic/ Latino": 42250,
+          "Middle Eastern": 215,
+          Mixed: 9772,
+          Other: 1610,
+          "Unknown or Not Reported": 28871,
+          "White/ White Heritage": 479489,
+        },
+      };
+
+      var ctx2 = document.getElementById("phase_line_chart").getContext("2d");
+      var ethnicityDropdown = document.getElementById(
+        "choose_ethnicity_dropdown"
+      );
+
+      var phase_line_chart = new Chart(ctx2, {
+        type: "line",
+        data: {
+          labels: Object.keys(data_phase),
+          datasets: [
+            {
+              label: ethnicityDropdown.value,
+              data: Object.values(data_phase).map(
+                (item) => item[ethnicityDropdown.value]
+              ),
+              borderColor: "rgb(75, 192, 192)",
+              fill: false,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: "Total participants by Phase",
+              font: {
+                size: 24,
+              },
+            },
+          },
+          scales: {
+            x: {
+              display: true,
+              title: {
+                display: true,
+                text: "Phase",
+                font: {
+                  size: 16,
+                },
+              },
+            },
+            y: {
+              display: true,
+              title: {
+                display: true,
+                text: "Number of Participants",
+                font: {
+                  size: 16,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      ethnicityDropdown.onchange = function () {
+        phase_line_chart.data.datasets[0].label = this.value;
+        phase_line_chart.data.datasets[0].data = Object.values(data_phase).map(
+          (item) => item[this.value]
+        );
+        phase_line_chart.update();
+      };
+    </script>
+
+    <button onclick="topFunction()" id="myBtn" title="Go to top">Top</button>
+
+    <script>
+      //Get the button:
+      mybutton = document.getElementById("myBtn");
+
+      // When the user scrolls down 20px from the top of the document, show the button
+      window.onscroll = function () {
+        scrollFunction();
+      };
+
+      function scrollFunction() {
+        if (
+          document.body.scrollTop > 20 ||
+          document.documentElement.scrollTop > 20
+        ) {
+          mybutton.style.display = "block";
+        } else {
+          mybutton.style.display = "none";
+        }
+      }
+
+      // When the user clicks on the button, scroll to the top of the document
+      function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+      }
+    </script>
+  </body>
+</html>
