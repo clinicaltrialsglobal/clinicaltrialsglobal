@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Cancer Trials</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <h1>Cancer Trials</h1>
+    <div class="button-container">
+      <button onclick="goToHomePage()">Home Page</button>
+      <button onclick="goToWorldTrials()">World Trials</button>
+      <button onclick="goToUKTrials()">UK Trials</button>
+      <button onclick="goToCancerTrials()">Cancer Trials</button>
+    </div>
+
+    <div
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 80vh;
+      "
+    >
+      <canvas id="doughnutChart"></canvas>
+      <button id="showEthnicity">Show Ethnicity Data</button>
+    </div>
+
+    <div class="chart-container">
+      <div class="box">
+        <div class="d">
+          <p>
+            Most clinical trials don’t publish their results.<strong>
+              Out of the 19% trials that publish results, only 48% have data on
+              ethnic groups.</strong
+            >
+            This research only analysed trial data published on official
+            clinical trial registries, however clinical trial data could also be
+            published in academic papers – excluded from this study.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <br />
+    </div>
+    <div
+      class="tableauPlaceholder"
+      id="viz1689095843605"
+      style="position: center"
+    >
+      <noscript>
+        <a href="#">
+          <img
+            alt="Dashboard 3"
+            src="https://public.tableau.com/static/images/ma/mapwithphaseandstatus/Dashboard3/1_rss.png"
+            style="border: none"
+          />
+        </a>
+      </noscript>
+      <object class="tableauViz" style="display: none">
+        <param name="host_url" value="https%3A%2F%2Fpublic.tableau.com%2F" />
+        <param name="embed_code_version" value="3" />
+        <param name="site_root" value="" />
+        <param name="name" value="mapwithphaseandstatus/Dashboard3" />
+        <param name="tabs" value="no" />
+        <param name="toolbar" value="yes" />
+        <param
+          name="static_image"
+          value="https://public.tableau.com/static/images/ma/mapwithphaseandstatus/Dashboard3/1.png"
+        />
+        <param name="animate_transition" value="yes" />
+        <param name="display_static_image" value="yes" />
+        <param name="display_spinner" value="yes" />
+        <param name="display_overlay" value="yes" />
+        <param name="display_count" value="yes" />
+        <param name="language" value="en-GB" />
+        <param name="filter" value="publish=yes" />
+      </object>
+    </div>
+
+    <script type="text/javascript">
+      var divElement = document.getElementById("viz1689095843605");
+      var vizElement = divElement.getElementsByTagName("object")[0];
+      if (divElement.offsetWidth > 800) {
+        vizElement.style.width = "1200px";
+        vizElement.style.height = "827px";
+      } else if (divElement.offsetWidth > 500) {
+        vizElement.style.width = "1200px";
+        vizElement.style.height = "827px";
+      } else {
+        vizElement.style.width = "100%";
+        vizElement.style.height = "727px";
+      }
+      var scriptElement = document.createElement("script");
+      scriptElement.src =
+        "https://public.tableau.com/javascripts/api/viz_v1.js";
+      vizElement.parentNode.insertBefore(scriptElement, vizElement);
+    </script>
+
+    <div class="chart-container">
+      <div class="box">
+        <div class="d">
+          <p>insert description.</p>
+        </div>
+      </div>
+    </div>
+
+    <div
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 80vh;
+      "
+    >
+      <canvas id="stacked_bar_chart"></canvas>
+    </div>
+
+    <div class="chart-container">
+      <div class="box">
+        <div class="d">
+          <p>insert description.</p>
+        </div>
+      </div>
+    </div>
+
+    <div
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 80vh;
+      "
+    >
+      <div style="width: 75%">
+        <canvas id="connected_dot_plot"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <div class="box">
+        <div class="d">
+          <p>insert description...</p>
+        </div>
+      </div>
+    </div>
+
+    <div
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 80vh;
+      "
+    >
+      <canvas id="horizontal_bar_chart"></canvas>
+      <select id="cancerTypeDropdown">
+        <option value="prostate">Prostate</option>
+        <option value="myeloma">Myeloma</option>
+      </select>
+    </div>
+
+    <div class="chart-container">
+      <div class="box">
+        <div class="d">
+          <p>insert description...</p>
+        </div>
+      </div>
+    </div>
+
+    <div
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 80vh;
+      "
+    >
+      <canvas id="myChart"></canvas>
+      <select id="cancerTypeDropdown2">
+        <option value="myeloma">Myeloma</option>
+        <option value="prostate">Prostate</option>
+      </select>
+    </div>
+
+    <div class="chart-container">
+      <div class="box">
+        <div class="d">
+          <p>insert description...</p>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+
+    <script>
+      // Global plugin registration
+      Chart.register({
+        id: "percentageLabel",
+        beforeDraw: function (chart) {
+          if (chart.canvas.id !== "doughnutChart") return; // Only apply to the doughnut chart
+          var width = chart.chartArea.width;
+          var height = chart.chartArea.height;
+          var ctx = chart.canvas.getContext("2d");
+
+          ctx.save();
+          var fontSize = (height / 100).toFixed(2); // Made the font size smaller
+          ctx.font = fontSize + "em sans-serif";
+          ctx.textBaseline = "middle";
+
+          // Calculate the appropriate percentage based on the data shown
+          var percentage = isEthnicityDataShown
+            ? Math.round(
+                (trialsReleasingResultsOnEthnicity / trialsReleasingResults) *
+                  100
+              )
+            : Math.round((trialsReleasingResults / totalTrials) * 100);
+          var text = percentage + "%";
+
+          var textX = Math.round((width - ctx.measureText(text).width) / 2);
+          var textY = height / 1.55;
+
+          ctx.fillText(text, textX, textY);
+          ctx.restore();
+        },
+      });
+
+      // Donut chart
+      // Donut chart
+      var ctx1 = document.getElementById("doughnutChart").getContext("2d");
+      var totalTrials = 57097;
+      var trialsReleasingResults = 10689;
+      var trialsReleasingResultsOnEthnicity = 5135;
+      var data = {
+        datasets: [
+          {
+            data: [
+              trialsReleasingResults,
+              totalTrials - trialsReleasingResults,
+            ],
+            backgroundColor: ["#fefe06", "#4D4D4D"], // Initial colors
+          },
+        ],
+        labels: ["Trials Releasing Results", "Trials Not Releasing Results"],
+      };
+      var myDoughnutChart = new Chart(ctx1, {
+        type: "doughnut",
+        data: data,
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          aspectRatio: 1,
+          plugins: {
+            title: {
+              display: true,
+              text: "Proportion of trials releasing results",
+              font: {
+                size: 24,
+              },
+            },
+          },
+        },
+      });
+
+      var isEthnicityDataShown = false;
+
+      document
+        .getElementById("showEthnicity")
+        .addEventListener("click", function () {
+          if (!isEthnicityDataShown) {
+            // Show ethnicity data
+            myDoughnutChart.data.datasets[0].data[0] =
+              trialsReleasingResultsOnEthnicity;
+            myDoughnutChart.data.datasets[0].data[1] =
+              trialsReleasingResults - trialsReleasingResultsOnEthnicity;
+            myDoughnutChart.data.labels[0] =
+              "Trials Releasing Results on Race/Ethnicity";
+            myDoughnutChart.data.labels[1] = "Other Trials Releasing Results";
+            myDoughnutChart.options.plugins.title.text =
+              "Proportion of Rrials Releasing Ethnic Enrolment Data of those releasing results";
+
+            myDoughnutChart.data.datasets[0].backgroundColor = [
+              "#483D8B",
+              "#fefe06",
+            ]; // New colors when button is clicked
+
+            isEthnicityDataShown = true;
+          } else {
+            // Revert to original data
+            myDoughnutChart.data.datasets[0].data[0] = trialsReleasingResults;
+            myDoughnutChart.data.datasets[0].data[1] =
+              totalTrials - trialsReleasingResults;
+            myDoughnutChart.data.labels[0] = "Trials Releasing Results";
+            myDoughnutChart.data.labels[1] = "Trials Not Releasing Results";
+            myDoughnutChart.options.plugins.title.text =
+              "Proportion of Trials Releasing Results";
+
+            myDoughnutChart.data.datasets[0].backgroundColor = [
+              "#fefe06",
+              "#4D4D4D",
+            ]; // Revert to original colors when button is clicked again
+
+            isEthnicityDataShown = false;
+          }
+          myDoughnutChart.update();
+        });
+
+      // Stacked bar chart
+      var race_colors = [
+        "#EE6A50",
+        "#fde624",
+        "#3b518b",
+        "#5cc862",
+        "orange",
+        "black",
+        "green",
+        "#21908c",
+        "#430154",
+        "skyblue",
+      ];
+
+      const ctx = document.getElementById("stacked_bar_chart").getContext("2d");
+      const chart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: [
+            2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012,
+            2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021,
+          ],
+          datasets: [
+            {
+              label: "White/ White Heritage",
+              data: [
+                0.861, 0.879, 0.772, 0.87, 0.874, 0.861, 0.893, 0.864, 0.839,
+                0.842, 0.828, 0.838, 0.737, 0.811, 0.851, 0.804, 0.797, 0.809,
+                0.878, 0.561,
+              ],
+              backgroundColor: race_colors[1],
+            },
+            {
+              label: "Black/ Black Heritage",
+              data: [
+                0.053, 0.054, 0.026, 0.062, 0.061, 0.064, 0.043, 0.054, 0.04,
+                0.031, 0.041, 0.028, 0.048, 0.022, 0.022, 0.02, 0.036, 0.047,
+                0.04, 0.087,
+              ],
+              backgroundColor: race_colors[2],
+            },
+            {
+              label: "Hispanic/ Latino",
+              data: [
+                0.064, 0.042, 0.187, 0.04, 0.012, 0.043, 0.029, 0.032, 0.033,
+                0.04, 0.04, 0.022, 0.134, 0.036, 0.031, 0.03, 0.048, 0.041,
+                0.033, 0.271,
+              ],
+              backgroundColor: race_colors[7],
+            },
+            {
+              label: "Asian/ Asian Heritage",
+              data: [
+                0.017, 0.021, 0.012, 0.022, 0.044, 0.023, 0.03, 0.037, 0.079,
+                0.046, 0.065, 0.099, 0.061, 0.122, 0.089, 0.138, 0.111, 0.095,
+                0.044, 0.011,
+              ],
+              backgroundColor: race_colors[3],
+            },
+            {
+              label: "American Indian/ Alaska Native",
+              data: [
+                0.002, 0.002, 0.001, 0.003, 0.003, 0.001, 0.002, 0.009, 0.006,
+                0.001, 0.002, 0.004, 0.005, 0.004, 0.002, 0.003, 0.003, 0.004,
+                0.001, 0.003,
+              ],
+              backgroundColor: race_colors[4],
+            },
+            {
+              label: "Middle Eastern",
+              data: [
+                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+              ],
+              backgroundColor: race_colors[8],
+            },
+            {
+              label: "Hawaiian/ Other Pacific Islander",
+              data: [
+                0.002, 0.001, 0.001, 0.001, 0.003, 0.002, 0.001, 0.001, 0.001,
+                0.001, 0.001, 0.001, 0.004, 0.001, 0.001, 0.0, 0.001, 0.001,
+                0.0, 0.0,
+              ],
+              backgroundColor: race_colors[5],
+            },
+            {
+              label: "Other",
+              data: [
+                0.0, 0.0, 0.0, 0.0, 0.002, 0.003, 0.0, 0.0, 0.0, 0.035, 0.018,
+                0.006, 0.001, 0.002, 0.003, 0.002, 0.001, 0.0, 0.0, 0.001,
+              ],
+              backgroundColor: race_colors[9],
+            },
+            {
+              label: "Mixed",
+              data: [
+                0.002, 0.001, 0.0, 0.002, 0.002, 0.002, 0.002, 0.002, 0.001,
+                0.005, 0.004, 0.001, 0.01, 0.002, 0.003, 0.002, 0.003, 0.003,
+                0.003, 0.064,
+              ],
+              backgroundColor: race_colors[6],
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: "Distribution of Ethnicity in Trials",
+              font: {
+                size: 24,
+              },
+            },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  var label = context.dataset.label || "";
+                  if (label) {
+                    label += ": ";
+                  }
+                  if (context.parsed.y !== null) {
+                    label += new Intl.NumberFormat("en-US", {
+                      style: "percent",
+                    }).format(context.parsed.y);
+                  }
+                  return label;
+                },
+              },
+            },
+          },
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: "Year",
+                font: {
+                  size: 16,
+                },
+              },
+              stacked: true,
+            },
+            y: {
+              title: {
+                display: true,
+                text: "Percentage",
+                font: {
+                  size: 16,
+                },
+              },
+              min: 0,
+              max: 1,
+              ticks: {
+                callback: function (value, index, values) {
+                  return value * 100 + "%";
+                },
+              },
+              stacked: true,
+            },
+          },
+        },
+      });
+
+      // Connected dot plot
+      var ctx2 = document.getElementById("connected_dot_plot").getContext("2d");
+      var myelomaDataTrials = [
+        { x: 0.049342, y: "myeloma" },
+        { x: 0.051435, y: "prostate" },
+      ];
+      var myelomaDataCancer = [
+        { x: 2.8, y: "myeloma" },
+        { x: 2.1, y: "prostate" },
+      ];
+      var myChart2 = new Chart(ctx2, {
+        type: "scatter",
+        data: {
+          datasets: [
+            {
+              label: "Black people in clinical trials",
+              data: myelomaDataTrials,
+              backgroundColor: "#d69c8c",
+              pointRadius: 10,
+            },
+            {
+              label: "Black people diagnosed",
+              data: myelomaDataCancer,
+              backgroundColor: "#55a4a6",
+              pointRadius: 10,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              type: "linear",
+              position: "bottom",
+              title: {
+                display: true,
+                text: "Ratio",
+              },
+            },
+            y: {
+              type: "category",
+              position: "left",
+              title: {
+                display: false,
+                text: "Race",
+              },
+            },
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: [
+                "Myeloma and prostate cancer versus",
+                "the representation of Black people in clinical trials",
+              ],
+              font: {
+                size: 24,
+              },
+            },
+          },
+        },
+        plugins: [
+          {
+            id: "connectDotsPlugin",
+            afterDraw: function (chart, args, options) {
+              var ctx = chart.ctx;
+              ctx.save();
+              ctx.strokeStyle = "grey";
+              ctx.lineWidth = 2;
+              var trialsDatasetMeta = chart.getDatasetMeta(0);
+              var cancerDatasetMeta = chart.getDatasetMeta(1);
+              trialsDatasetMeta.data.forEach(function (point, index) {
+                var trialsPointPosition = point.getCenterPoint();
+                var cancerPointPosition =
+                  cancerDatasetMeta.data[index].getCenterPoint();
+                ctx.beginPath();
+                ctx.moveTo(trialsPointPosition.x, trialsPointPosition.y);
+                ctx.lineTo(cancerPointPosition.x, cancerPointPosition.y);
+                ctx.stroke();
+              });
+              ctx.restore();
+            },
+          },
+          {
+            id: "verticalLinePlugin",
+            afterDraw: function (chart, args, options) {
+              var xScale = chart.scales.x;
+              var yScale = chart.scales.y;
+              var ctx = chart.ctx;
+              ctx.save();
+              var xPos = xScale.getPixelForValue(1);
+              ctx.beginPath();
+              ctx.setLineDash([5, 5]);
+              ctx.moveTo(xPos, yScale.bottom);
+              ctx.lineTo(xPos, yScale.top);
+              ctx.lineWidth = 1.5;
+              ctx.strokeStyle = "grey";
+              ctx.stroke();
+              ctx.restore();
+            },
+          },
+        ],
+      });
+
+      // drugs for prostate and myeloma
+      var ctx3 = document
+        .getElementById("horizontal_bar_chart")
+        .getContext("2d");
+      var dataChart3 = {
+        prostate: {
+          labels: [
+            "bortezomib",
+            "carfilzomib",
+            "degarelix",
+            "docetaxel",
+            "enzalutamide",
+            "lenalidomide",
+            "radium_223",
+          ],
+          datasets: [
+            {
+              label: "Black/ Black Heritage",
+              data: [6, 6, 1013, 30, 822, 134, 3],
+              backgroundColor: "#4789e2",
+            },
+            {
+              label: "Remaining Ethnic Groups",
+              data: [0, 0, 786, 10, 3387, 301, 17],
+              backgroundColor: "#d0d0d0",
+            },
+            {
+              label: "White/ White Heritage",
+              data: [40, 22, 13787, 309, 22696, 2067, 248],
+              backgroundColor: "#CD3333",
+            },
+          ],
+        },
+        myeloma: {
+          labels: ["bortezomib", "carfilzomib", "daratumumab", "lenalidomide"],
+          datasets: [
+            {
+              label: "Black/ Black Heritage",
+              data: [4, 340, 125, 1258],
+              backgroundColor: "#4789e2",
+            },
+            {
+              label: "Remaining Ethnic Groups",
+              data: [12, 2065, 778, 4697],
+              backgroundColor: "#d0d0d0",
+            },
+            {
+              label: "White/ White Heritage",
+              data: [118, 11431, 4191, 19243],
+              backgroundColor: "#CD3333",
+            },
+          ],
+        },
+      };
+      // Store a copy of the original data before transforming to proportions
+      var originalDataChart3 = JSON.parse(JSON.stringify(dataChart3));
+
+      function calculateProportions(datasets) {
+        for (let i = 0; i < datasets[0].data.length; i++) {
+          let total = 0;
+          for (let dataset of datasets) {
+            total += dataset.data[i];
+          }
+          for (let dataset of datasets) {
+            dataset.data[i] /= total;
+          }
+        }
+      }
+
+      calculateProportions(dataChart3.prostate.datasets);
+      calculateProportions(dataChart3.myeloma.datasets);
+
+      var myChart3 = new Chart(ctx3, {
+        type: "bar",
+        data: dataChart3.prostate, // Default to prostate data
+        options: {
+          plugins: {
+            title: {
+              display: true,
+              text: [
+                "Cancer drugs for Prostate cancer approved in the UK and",
+                "clinical trials representation of Black participants",
+              ],
+              font: {
+                size: 24,
+              },
+            },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  var datasetIndex = context.datasetIndex;
+                  var dataIndex = context.dataIndex;
+                  var selectedCancerType1 =
+                    document.getElementById("cancerTypeDropdown").value;
+
+                  // Use originalDataChart3 to retrieve the original counts
+                  var originalCount =
+                    originalDataChart3[selectedCancerType1].datasets[
+                      datasetIndex
+                    ].data[dataIndex];
+                  var totalCount = originalDataChart3[
+                    selectedCancerType1
+                  ].datasets.reduce(
+                    (sum, dataset) => sum + dataset.data[dataIndex],
+                    0
+                  );
+
+                  var percent = (originalCount / totalCount) * 100;
+
+                  return percent.toFixed(0) + "%";
+                },
+              },
+            },
+          },
+          scales: {
+            x: {
+              stacked: true,
+              ticks: {
+                callback: function (value, index, values) {
+                  return (value * 100).toFixed(0) + "%"; // Convert proportion to percentage
+                },
+              },
+            },
+            y: {
+              stacked: true,
+            },
+          },
+          indexAxis: "y", // Makes the chart horizontal with labels on y-axis
+        },
+      });
+
+      // Get a reference to the dropdown menu
+      var dropdownMenu1 = document.getElementById("cancerTypeDropdown");
+
+      // Add an event listener that fires whenever a new option is selected
+      dropdownMenu1.addEventListener("change", function () {
+        // Get the currently selected cancer type
+        var selectedCancerType1 = dropdownMenu1.value;
+
+        // Update the chart's data and title based on the selected cancer type
+        if (selectedCancerType1 === "prostate") {
+          myChart3.data = dataChart3.prostate;
+          myChart3.options.plugins.title.text = [
+            "Cancer drugs for Prostate cancer approved in the UK and",
+            "clinical trials representation of Black participants",
+          ];
+        } else if (selectedCancerType1 === "myeloma") {
+          myChart3.data = dataChart3.myeloma;
+          myChart3.options.plugins.title.text = [
+            "Cancer drugs for Myeloma cancer approved in the UK and",
+            "clinical trials representation of Black participants",
+          ];
+        }
+
+        // Redraw the chart with the new data
+        myChart3.update();
+      });
+
+      // stacked area chart
+      var ctx4 = document.getElementById("myChart").getContext("2d");
+      var dataChart4 = {
+        myeloma: {
+          labels: [
+            2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
+            2016, 2017, 2018,
+          ],
+          datasets: [
+            {
+              label: "Black/ Black Heritage",
+              data: [4, 0, 3, 1, 55, 626, 260, 227, 122, 42, 178, 73, 60, 76],
+              backgroundColor: "rgba(71,137,226,0.5)",
+            },
+            {
+              label: "Unknown or Not Reported",
+              data: [5, 0, 5, 0, 4, 243, 2391, 611, 170, 62, 198, 61, 139, 992],
+              backgroundColor: "rgba(208,208,208,0.5)",
+            },
+            {
+              label: "White/ White Heritage",
+              data: [
+                60, 58, 80, 35, 438, 5562, 4846, 4191, 4965, 724, 6696, 1181,
+                3717, 2430,
+              ],
+              backgroundColor: "rgba(205,51,51,0.5)",
+            },
+          ],
+        },
+        prostate: {
+          labels: [
+            2003, 2004, 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2014,
+            2015, 2016, 2017, 2018, 2019,
+          ],
+          datasets: [
+            {
+              label: "Black/ Black Heritage",
+              data: [
+                4, 54, 241, 221, 28, 690, 20, 3, 25, 71, 441, 49, 90, 66, 0, 11,
+              ],
+              backgroundColor: "rgba(71,137,226,0.5)",
+            },
+            {
+              label: "Unknown or Not Reported",
+              data: [
+                0, 0, 7, 2, 2, 298, 0, 3, 14, 46, 112, 48, 216, 224, 0, 70,
+              ],
+              backgroundColor: "rgba(208,208,208,0.5)",
+            },
+            {
+              label: "White/ White Heritage",
+              data: [
+                35, 614, 3142, 3691, 1046, 11506, 444, 870, 499, 1221, 4335,
+                999, 5002, 3172, 30, 2563,
+              ],
+              backgroundColor: "rgba(205,51,51,0.5)",
+            },
+          ],
+        },
+      };
+
+      var myChart4 = new Chart(ctx4, {
+        type: "line",
+        data: dataChart4.myeloma, // Default to myeloma data
+        options: {
+          scales: {
+            x: {
+              type: "linear",
+              position: "bottom",
+              ticks: {
+                callback: function (value, index, values) {
+                  return value.toString().replace(",", ""); // remove the comma
+                },
+              },
+            },
+            y: {
+              stacked: true, // stack the datasets
+            },
+          },
+          elements: {
+            line: {
+              tension: 0, // disables bezier curves
+              fill: true, // fill the area under the line
+            },
+            point: {
+              radius: 0, // disables point markers
+            },
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: [
+                "Clinical trials for Myeloma cancer",
+                "Inclusion of Black participants over time",
+              ],
+              font: {
+                size: 24,
+              },
+            },
+            filler: {
+              propagate: true,
+            },
+          },
+        },
+      });
+
+      // Get a reference to the dropdown menu
+      var dropdownMenu2 = document.getElementById("cancerTypeDropdown2");
+
+      // Add an event listener that fires whenever a new option is selected
+      dropdownMenu2.addEventListener("change", function () {
+        // Get the currently selected cancer type
+        var selectedCancerType2 = dropdownMenu2.value;
+
+        // Update the chart's data based on the selected cancer type
+        if (selectedCancerType2 === "myeloma") {
+          myChart4.data = dataChart4.myeloma;
+          myChart4.options.plugins.title.text = [
+            "Clinical trials for Myeloma cancer",
+            "Inclusion of Black participants over time",
+          ];
+        } else if (selectedCancerType2 === "prostate") {
+          myChart4.data = dataChart4.prostate;
+          myChart4.options.plugins.title.text = [
+            "Clinical trials for Prostate cancer",
+            "Inclusion of Black participants over time",
+          ];
+        }
+
+        // Redraw the chart with the new data
+        myChart4.update();
+      });
+    </script>
+
+    <button onclick="topFunction()" id="myBtn" title="Go to top">Top</button>
+
+    <script>
+      //Get the button:
+      mybutton = document.getElementById("myBtn");
+
+      // When the user scrolls down 20px from the top of the document, show the button
+      window.onscroll = function () {
+        scrollFunction();
+      };
+
+      function scrollFunction() {
+        if (
+          document.body.scrollTop > 20 ||
+          document.documentElement.scrollTop > 20
+        ) {
+          mybutton.style.display = "block";
+        } else {
+          mybutton.style.display = "none";
+        }
+      }
+
+      // When the user clicks on the button, scroll to the top of the document
+      function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+      }
+    </script>
+  </body>
+</html>
