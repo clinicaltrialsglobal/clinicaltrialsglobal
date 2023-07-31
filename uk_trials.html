@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>UK Clinical Trials</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <h1>UK Trials</h1>
+    <div class="button-container">
+      <button onclick="goToHomePage()">Home Page</button>
+      <button onclick="goToWorldTrials()">World Trials</button>
+      <button onclick="goToUKTrials()">UK Trials</button>
+      <button onclick="goToCancerTrials()">Cancer Trials</button>
+    </div>
+    <script src="script.js"></script>
+
+    <div
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 80hv;
+      "
+    >
+      <canvas id="pie_chart"></canvas>
+    </div>
+
+    <div class="container">
+      <div class="box">
+        <div class="d">
+          <p>Write text here...</p>
+        </div>
+      </div>
+    </div>
+
+    <div
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 80vh;
+      "
+    >
+      <div style="width: 75%">
+        <canvas id="connected_dot"></canvas>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="box">
+        <div class="d">
+          <p>
+            The pink dots show the ethnic groups in clinical trials. The green
+            dots show the ethnic groups in the UK population from the 2021
+            census. There are more white people in trials than there are white
+            people in the UK.
+            <br />
+            <br />
+            Source for census data:
+            <a
+              href="https://commonslibrary.parliament.uk/constituency-statistics-ethnicity/"
+              target="_blank"
+              >UK Parliament</a
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: center">
+      <img
+        src="https://cdn.glitch.global/d00b7e14-f540-447a-a51d-67544622f810/heatmap_UK_Exclusive.png?v=1690372950100"
+        style="width: 65%"
+      />
+    </div>
+
+    <div class="container">
+      <div class="box">
+        <div class="d">
+          <p>insert description.</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      //////////////////////////////////////////////////////////////
+
+      ///////////////////////// PIE CHART //////////////////////////
+
+      //////////////////////////////////////////////////////////////
+      var ctx = document.getElementById("pie_chart").getContext("2d");
+
+      var data = {
+        labels: [
+          "White/ White Heritage",
+          "Black/ Black Heritage",
+          "Hispanic/ Latino",
+          "Asian/ Asian Heritage",
+          "Unknown or Not Reported",
+          "American Indian/ Alaska Native",
+          "Middle Eastern",
+          "Hawaiian/ Other Pacific Islander",
+          "Other",
+          "Mixed",
+        ],
+        datasets: [
+          {
+            label: "% of participants",
+            data: [
+              60.72, 1.12, 0.31, 10.11, 27.05, 0.01, 0.2, 0.02, 0.22, 0.24,
+            ],
+            backgroundColor: [
+              "#fde624",
+              "#3b518b",
+              "#21908c",
+              "#5cc862",
+              "#EE6A50",
+              "orange",
+              "#430154",
+              "black",
+              "skyblue",
+              "green",
+            ],
+            hoverBackgroundColor: [
+              "#fde624",
+              "#3b518b",
+              "#21908c",
+              "#5cc862",
+              "#EE6A50",
+              "orange",
+              "#430154",
+              "black",
+              "skyblue",
+              "green",
+            ].map((color) => lightenColor(color, 20)),
+            borderColor: "rgba(255, 255, 255, 0.2)",
+            borderWidth: 1,
+          },
+        ],
+      };
+
+      var myPieChart = new Chart(ctx, {
+        type: "pie",
+        data: data,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: "right",
+              onClick: null,
+            },
+            title: {
+              display: true,
+              text: "Proportion of total participants by ethnic group",
+              font: {
+                size: 35,
+              },
+            },
+          },
+        },
+      });
+
+      function lightenColor(color, percent) {
+        var num = parseInt(color.replace("#", ""), 16),
+          amt = Math.round(2.55 * percent),
+          R = (num >> 16) + amt,
+          B = ((num >> 8) & 0x00ff) + amt,
+          G = (num & 0x0000ff) + amt;
+        return (
+          "#" +
+          (
+            0x1000000 +
+            (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+            (B < 255 ? (B < 1 ? 0 : B) : 255) * 0x100 +
+            (G < 255 ? (G < 1 ? 0 : G) : 255)
+          )
+            .toString(16)
+            .slice(1)
+        );
+      }
+
+      //////////////////////////////////////////////////////////////
+
+      /////////////////// CONNECTED DOT CHART //////////////////////
+
+      //////////////////////////////////////////////////////////////
+      var ctx = document.getElementById("connected_dot").getContext("2d");
+
+      var trialsData = [
+        { x: 90.91, y: "White/ White Heritage" },
+        { x: 2.75, y: "Black/ Black Heritage" },
+        { x: 3.26, y: "Asian/ Asian Heritage" },
+        { x: 0.07, y: "Middle Eastern" },
+        { x: 1.12, y: "Mixed" },
+        { x: 0.6, y: "Other" },
+      ];
+
+      var censusData = [
+        { x: 81.7, y: "White/ White Heritage" },
+        { x: 4.0, y: "Black/ Black Heritage" },
+        { x: 9.3, y: "Asian/ Asian Heritage" },
+        { x: 0.6, y: "Middle Eastern" },
+        { x: 2.9, y: "Mixed" },
+        { x: 1.5, y: "Other" },
+      ];
+
+      var myChart = new Chart(ctx, {
+        type: "scatter",
+        data: {
+          datasets: [
+            {
+              label: "% of Trials",
+              data: trialsData,
+              backgroundColor: "#d69c8c",
+              pointRadius: 9,
+            },
+            {
+              label: "UK Census",
+              data: censusData,
+              backgroundColor: "#55a4a6",
+              pointRadius: 9,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              type: "linear",
+              position: "bottom",
+              title: {
+                display: true,
+                text: "Percentage (%)",
+              },
+            },
+            y: {
+              type: "category",
+              position: "left",
+              title: {
+                display: true,
+                text: "Ethnic group",
+              },
+            },
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: "Proportion of ethnic groups in trials vs UK 2021 Census",
+              font: {
+                size: 24,
+              },
+            },
+          },
+        },
+        plugins: [
+          {
+            id: "connectDotsPlugin",
+            afterDraw: function (chart, args, options) {
+              var ctx = chart.ctx;
+              ctx.save();
+              ctx.strokeStyle = "grey";
+              ctx.lineWidth = 2;
+
+              var trialsDatasetMeta = chart.getDatasetMeta(0);
+              var censusDatasetMeta = chart.getDatasetMeta(1);
+
+              trialsDatasetMeta.data.forEach(function (point, index) {
+                var trialsPointPosition = point.getCenterPoint();
+                var censusPointPosition =
+                  censusDatasetMeta.data[index].getCenterPoint();
+
+                ctx.beginPath();
+                ctx.moveTo(trialsPointPosition.x, trialsPointPosition.y);
+                ctx.lineTo(censusPointPosition.x, censusPointPosition.y);
+                ctx.stroke();
+              });
+
+              ctx.restore();
+            },
+          },
+        ],
+      });
+    </script>
+
+    <button onclick="topFunction()" id="myBtn" title="Go to top">Top</button>
+
+    <script>
+      //Get the button:
+      mybutton = document.getElementById("myBtn");
+
+      // When the user scrolls down 20px from the top of the document, show the button
+      window.onscroll = function () {
+        scrollFunction();
+      };
+
+      function scrollFunction() {
+        if (
+          document.body.scrollTop > 20 ||
+          document.documentElement.scrollTop > 20
+        ) {
+          mybutton.style.display = "block";
+        } else {
+          mybutton.style.display = "none";
+        }
+      }
+
+      // When the user clicks on the button, scroll to the top of the document
+      function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+      }
+    </script>
+  </body>
+</html>
